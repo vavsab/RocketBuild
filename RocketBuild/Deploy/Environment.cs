@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using GalaSoft.MvvmLight;
 
 namespace RocketBuild.Deploy
 {
-    public class DisplayEnvironment : ObservableObject
+    public class DisplayEnvironment
     {
         public string Name { get; set; }
 

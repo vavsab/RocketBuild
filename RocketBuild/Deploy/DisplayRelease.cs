@@ -1,15 +1,13 @@
-﻿using GalaSoft.MvvmLight;
+﻿using DevExpress.Mvvm;
 
 namespace RocketBuild.Deploy
 {
-    public class DisplayRelease : ObservableObject
+    public class DisplayRelease : BindableBase
     {
-        private bool isChecked;
-
         public bool IsChecked
         {
-            get => isChecked;
-            set => Set(ref isChecked, value);
+            get => GetProperty(() => IsChecked);
+            set => SetProperty(() => IsChecked, value);
         }
 
         public int Id { get; set; }

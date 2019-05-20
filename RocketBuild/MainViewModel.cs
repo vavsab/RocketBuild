@@ -4,14 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+using DevExpress.Mvvm;
+using DevExpress.Mvvm.DataAnnotations;
 using RocketBuild.Build;
 using RocketBuild.Deploy;
 using RocketBuild.Extensions;
 using MessageBox = System.Windows.Forms.MessageBox;
-
-// ReSharper disable LocalizableElement
 
 namespace RocketBuild
 {
@@ -20,79 +18,38 @@ namespace RocketBuild
         private readonly DeployHelper deployHelper = new DeployHelper();
         private readonly BuildHelper buildHelper = new BuildHelper();
 
-        private List<DisplayBuild> builds;
-        private List<DisplayEnvironment> environments;
-        private DisplayEnvironment selectedEnvironment;
-        private List<DisplayRelease> currentReleases;
-        private bool isBusy;
-
         public MainViewModel()
         {
-            RefreshBuildsCommand = new RelayCommand(async () => await OnRefreshBuildsCommand());
-            RefreshEnvironmentsCommand = new RelayCommand(async () => await OnRefreshEnvironmentsCommand());
-            QueueBuildsCommand = new RelayCommand(OnQueueBuildsCommand);
-            QueueDeployCommand = new RelayCommand(OnQueueDeployCommand);
-
-            OnRefreshBuildsCommand()
-                .ContinueWith(t => OnRefreshEnvironmentsCommand()
+            RefreshBuilds()
+                .ContinueWith(t => RefreshEnvironments()
                     .ContinueWith(t2 => RestoreSelections()));
         }
 
-        public RelayCommand RefreshBuildsCommand { get; }
-
-        public RelayCommand RefreshEnvironmentsCommand { get; }
-
-        public RelayCommand QueueBuildsCommand { get; }
-
-        public RelayCommand QueueDeployCommand { get; }
-
-        #region Title buttons
-
-        public RelayCommand<Window> MinimizeWindowCommand { get; } = new RelayCommand<Window>(MinimizeWindow);
-
-        public RelayCommand<Window> MaximizeWindowCommand { get; } = new RelayCommand<Window>(MaximizeWindow);
-
-        public RelayCommand<Window> CloseWindowCommand { get; } = new RelayCommand<Window>(CloseWindow);
-
-        private static void MinimizeWindow(Window window) => SystemCommands.MinimizeWindow(window);
-
-        private static void MaximizeWindow(Window window)
-        {
-            if (window.WindowState == WindowState.Maximized)
-                SystemCommands.RestoreWindow(window);
-            else
-                SystemCommands.MaximizeWindow(window);
-        }
-
-        private static void CloseWindow(Window window) => SystemCommands.CloseWindow(window);
-
-        #endregion
-
         public bool IsBusy
         {
-            get => isBusy;
-            set => Set(ref isBusy, value);
+            get => GetProperty(() => IsBusy);
+            set => SetProperty(() => IsBusy, value);
         }
 
         public List<DisplayBuild> Builds
         {
-            get => builds;
-            set => Set(ref builds, value);
+            get => GetProperty(() => Builds);
+            set => SetProperty(() => Builds, value);
         }
 
         public List<DisplayEnvironment> Environments
         {
-            get => environments;
-            set => Set(ref environments, value);
+            get => GetProperty(() => Environments);
+            set => SetProperty(() => Environments, value);
         }
 
         public DisplayEnvironment SelectedEnvironment
         {
-            get => selectedEnvironment;
+            get => GetProperty(() => SelectedEnvironment);
             set
             {
-                Set(ref selectedEnvironment, value);
-                CurrentReleases = selectedEnvironment?.Releases
+                SetProperty(() => SelectedEnvironment, value);
+                CurrentReleases = value?.Releases
                     .OrderBy(r => r.Name)
                     .ToList();
             }
@@ -100,8 +57,8 @@ namespace RocketBuild
 
         public List<DisplayRelease> CurrentReleases
         {
-            get => currentReleases;
-            set => Set(ref currentReleases, value);
+            get => GetProperty(() => CurrentReleases);
+            set => SetProperty(() => CurrentReleases, value);
         }
 
         public void OnClosing()
@@ -110,19 +67,20 @@ namespace RocketBuild
 
             Settings.Current.LastSelectedBuildIds.Clear();
             Settings.Current.LastSelectedBuildIds.AddRange(Builds
-                ?.Where(b => b.IsChecked)
-                .Select(b => b.DefinitionId));
+                    ?.Where(b => b.IsChecked)
+                    .Select(b => b.DefinitionId));
 
             Settings.Current.LastSelectedReleaseIds.Clear();
             Settings.Current.LastSelectedReleaseIds.AddRange(Environments
-                .ToDictionary(e => e.Name, e => e.Releases
-                    .Where(r => r.IsChecked)
-                    .Select(r => r.Id)));
+                    .ToDictionary(e => e.Name, e => e.Releases
+                        .Where(r => r.IsChecked)
+                        .Select(r => r.Id)));
 
             Settings.Save();
         }
 
-        private async Task OnRefreshBuildsCommand()
+        [Command]
+        public async Task RefreshBuilds()
         {
             try
             {
@@ -147,7 +105,7 @@ namespace RocketBuild
             }
             catch (Exception e)
             {
-                MessageBox.Show($"Exception > {nameof(OnRefreshBuildsCommand)}: {e}");
+                MessageBox.Show($"Exception > {nameof(RefreshBuilds)}: {e}");
             }
             finally
             {
@@ -155,7 +113,8 @@ namespace RocketBuild
             }
         }
 
-        private async Task OnRefreshEnvironmentsCommand()
+        [Command]
+        public async Task RefreshEnvironments()
         {
             try
             {
@@ -189,7 +148,7 @@ namespace RocketBuild
             }
             catch (Exception e)
             {
-                MessageBox.Show($"Exception > {nameof(OnRefreshEnvironmentsCommand)}: {e}");
+                MessageBox.Show($"Exception > {nameof(RefreshEnvironments)}: {e}");
             }
             finally
             {
@@ -197,31 +156,8 @@ namespace RocketBuild
             }
         }
 
-        private void RestoreSelections()
-        {
-            foreach (DisplayBuild build in Builds)
-            {
-                build.IsChecked = Settings.Current.LastSelectedBuildIds.Contains(build.DefinitionId);
-            }
-
-            foreach (DisplayEnvironment environment in Environments)
-            {
-                int[] lastSelectedReleases = Settings.Current.LastSelectedReleaseIds
-                    .GetValueOrDefault(environment.Name)
-                    .ToArray();
-
-                foreach (DisplayRelease release in environment.Releases)
-                {
-                    release.IsChecked = lastSelectedReleases.Contains(release.Id);
-                }
-            }
-
-            SelectedEnvironment = Environments
-                .FirstOrDefault(e => String.Equals(e.Name, Settings.Current.LastSelectedEnvironment,
-                    StringComparison.OrdinalIgnoreCase));
-        }
-
-        private async void OnQueueBuildsCommand()
+        [Command]
+        public async void QueueBuilds()
         {
             try
             {
@@ -251,7 +187,7 @@ namespace RocketBuild
             }
             catch (Exception e)
             {
-                MessageBox.Show($"Exception > {nameof(OnQueueBuildsCommand)}: {e}");
+                MessageBox.Show($"Exception > {nameof(QueueBuilds)}: {e}");
             }
             finally
             {
@@ -259,7 +195,8 @@ namespace RocketBuild
             }
         }
 
-        private async void OnQueueDeployCommand()
+        [Command]
+        public async void QueueDeploy()
         {
             try
             {
@@ -289,12 +226,55 @@ namespace RocketBuild
             }
             catch (Exception e)
             {
-                MessageBox.Show($"Exception > {nameof(OnQueueDeployCommand)}: {e}");
+                MessageBox.Show($"Exception > {nameof(QueueDeploy)}: {e}");
             }
             finally
             {
                 IsBusy = false;
             }
+        }
+
+        #region Title commands
+
+        [Command]
+        public void MinimizeWindow(Window window) => SystemCommands.MinimizeWindow(window);
+
+        [Command]
+        public void MaximizeWindow(Window window)
+        {
+            if (window.WindowState == WindowState.Maximized)
+                SystemCommands.RestoreWindow(window);
+            else
+                SystemCommands.MaximizeWindow(window);
+        }
+
+        [Command]
+        public void CloseWindow(Window window) => SystemCommands.CloseWindow(window);
+
+        #endregion
+
+        private void RestoreSelections()
+        {
+            foreach (DisplayBuild build in Builds)
+            {
+                build.IsChecked = Settings.Current.LastSelectedBuildIds.Contains(build.DefinitionId);
+            }
+
+            foreach (DisplayEnvironment environment in Environments)
+            {
+                int[] lastSelectedReleases = Settings.Current.LastSelectedReleaseIds
+                    .GetValueOrDefault(environment.Name)
+                    .ToArray();
+
+                foreach (DisplayRelease release in environment.Releases)
+                {
+                    release.IsChecked = lastSelectedReleases.Contains(release.Id);
+                }
+            }
+
+            SelectedEnvironment = Environments
+                .FirstOrDefault(e => String.Equals(e.Name, Settings.Current.LastSelectedEnvironment,
+                    StringComparison.OrdinalIgnoreCase));
         }
     }
 }
