@@ -247,25 +247,31 @@ namespace RocketBuild
 
         private void RestoreSelections()
         {
-            foreach (DisplayBuild build in Builds)
+            if (Builds != null)
             {
-                build.IsChecked = Settings.Current.LastSelectedBuildIds.Contains(build.DefinitionId);
+                foreach (DisplayBuild build in Builds)
+                {
+                    build.IsChecked = Settings.Current.LastSelectedBuildIds.Contains(build.DefinitionId);
+                }
             }
 
-            foreach (DisplayEnvironment environment in Environments)
+            if (Environments != null)
             {
-                int[] lastSelectedReleases = Settings.Current.LastSelectedReleaseIds
-                    .GetValueOrDefault(environment.Name)
-                    .ToArray();
-
-                foreach (DisplayRelease release in environment.Releases)
+                foreach (DisplayEnvironment environment in Environments)
                 {
-                    release.IsChecked = lastSelectedReleases.Contains(release.Id);
+                    int[] lastSelectedReleases = Settings.Current.LastSelectedReleaseIds
+                        .GetValueOrDefault(environment.Name)
+                        .ToArray();
+
+                    foreach (DisplayRelease release in environment.Releases)
+                    {
+                        release.IsChecked = lastSelectedReleases.Contains(release.Id);
+                    }
                 }
             }
 
             SelectedEnvironment = Environments
-                .FirstOrDefault(e => String.Equals(e.Name, Settings.Current.LastSelectedEnvironment,
+                ?.FirstOrDefault(e => String.Equals(e.Name, Settings.Current.LastSelectedEnvironment,
                     StringComparison.OrdinalIgnoreCase));
         }
     }
