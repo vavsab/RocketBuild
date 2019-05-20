@@ -85,7 +85,8 @@
                             <DataGrid Grid.Column="1" ItemsSource="{Binding CurrentReleases}"
                                       AutoGenerateColumns="False" CanUserAddRows="False"
                                       CanUserDeleteRows="False" CanUserResizeRows="False"
-                                      SelectionUnit="FullRow">
+                                      SelectionUnit="FullRow"
+                                      md:DataGridAssist.CellPadding="13 8 8 8">
                                 <DataGrid.Columns>
                                     <DataGridCheckBoxColumn Header="" Binding="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}"
                                                             ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
