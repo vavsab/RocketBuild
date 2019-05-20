@@ -29,12 +29,12 @@
                         </Grid.RowDefinitions>
 
                         <DataGrid Grid.Row="0" ItemsSource="{Binding Builds}"
-					          AutoGenerateColumns="False" CanUserAddRows="False"
-					          CanUserDeleteRows="False" CanUserResizeRows="False"
-					          SelectionUnit="FullRow"
-                              md:DataGridAssist.CellPadding="13 8 8 8">
+					              AutoGenerateColumns="False" CanUserAddRows="False"
+					              CanUserDeleteRows="False" CanUserResizeRows="False"
+					              SelectionUnit="FullRow"
+                                  md:DataGridAssist.CellPadding="13 8 8 8">
                             <DataGrid.Columns>
-                                <DataGridCheckBoxColumn Header="" Binding="{Binding IsChecked}"
+                                <DataGridCheckBoxColumn Header="" Binding="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}"
                                                         ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
                                                         EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"/>
                                 <DataGridTextColumn Header="Build name" IsReadOnly="True" Binding="{Binding Name}"/>
@@ -83,11 +83,11 @@
 						         ItemsSource="{Binding Environments}" SelectedItem="{Binding SelectedEnvironment}"/>
 
                             <DataGrid Grid.Column="1" ItemsSource="{Binding CurrentReleases}"
-						          AutoGenerateColumns="False" CanUserAddRows="False"
-						          CanUserDeleteRows="False" CanUserResizeRows="False"
-						          SelectionUnit="FullRow">
+                                      AutoGenerateColumns="False" CanUserAddRows="False"
+                                      CanUserDeleteRows="False" CanUserResizeRows="False"
+                                      SelectionUnit="FullRow">
                                 <DataGrid.Columns>
-                                    <DataGridCheckBoxColumn Header="" Binding="{Binding IsChecked}"
+                                    <DataGridCheckBoxColumn Header="" Binding="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}"
                                                             ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
                                                             EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"/>
 

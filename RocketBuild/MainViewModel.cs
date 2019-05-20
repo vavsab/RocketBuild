@@ -156,17 +156,13 @@ namespace RocketBuild
             }
         }
 
+        public bool CanQueueBuilds() => Builds?.Any(b => b.IsChecked) == true;
+
         [Command]
         public async void QueueBuilds()
         {
             try
             {
-                if (Builds?.Any(b => b.IsChecked) != true)
-                {
-                    MessageBox.Show("Nothing to build.");
-                    return;
-                }
-
                 DisplayBuild[] buildsToQueue = Builds
                     .Where(b => b.IsChecked)
                     .ToArray();
@@ -195,17 +191,13 @@ namespace RocketBuild
             }
         }
 
+        public bool CanQueueDeploy() => CurrentReleases?.Any(b => b.IsChecked) == true;
+
         [Command]
         public async void QueueDeploy()
         {
             try
             {
-                if (CurrentReleases?.Any(b => b.IsChecked) != true)
-                {
-                    MessageBox.Show("Nothing to deploy.");
-                    return;
-                }
-
                 DisplayRelease[] releasesToQueue = CurrentReleases
                     .Where(r => r.IsChecked)
                     .ToArray();
