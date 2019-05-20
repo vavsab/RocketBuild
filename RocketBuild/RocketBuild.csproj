@@ -187,6 +187,7 @@
     <Compile Include="Deploy\DisplayReleaseStatus.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
+    <Compile Include="Helpers\VssClientHelper.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Deploy\DeployHelper.cs" />

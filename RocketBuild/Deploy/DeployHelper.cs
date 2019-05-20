@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
-using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
 using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
 using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Contracts;
 using Microsoft.VisualStudio.Services.WebApi;
-using RocketBuild.Credentials;
+using RocketBuild.Helpers;
 
 namespace RocketBuild.Deploy
 {
@@ -17,7 +16,10 @@ namespace RocketBuild.Deploy
     {
         public async Task<List<DisplayEnvironment>> GetEnvironmentsAsync()
         {
-            var client = GetClient<ReleaseHttpClient>();
+            var client = VssClientHelper.GetClient<ReleaseHttpClient>(
+                Settings.Current.AccountUrl,
+                Settings.Current.ApiKey,
+                Settings.Current.UseSsl);
             var environments = new List<DisplayEnvironment>();
 
             List<ReleaseDefinition> definitions = await client.GetReleaseDefinitionsAsync(Settings.Current.Project, expand: ReleaseDefinitionExpands.Environments);
@@ -80,26 +82,16 @@ namespace RocketBuild.Deploy
                 return;
             }
 
-            var client = GetClient<ReleaseHttpClient>();
+            var client = VssClientHelper.GetClient<ReleaseHttpClient>(
+                Settings.Current.AccountUrl,
+                Settings.Current.ApiKey,
+                Settings.Current.UseSsl);
 
             await client.UpdateReleaseEnvironmentAsync(new ReleaseEnvironmentUpdateMetadata
             {
                 Status = EnvironmentStatus.InProgress,
                 Comment = "Started from RocketBuild application"
             }, Settings.Current.Project, release.Id, release.EnvironmentId.Value);
-        }
-
-        private static T GetClient<T>()
-            where T : VssHttpClientBase
-        {
-            var accountUri = new Uri(Settings.Current.AccountUrl);
-
-            FederatedCredential credential = Settings.Current.UseSsl
-                ? (FederatedCredential) new VssBasicCredential(null, Settings.Current.ApiKey)
-                : new VssNonSslBasicCredential(null, Settings.Current.ApiKey);
-            var connection = new VssConnection(accountUri, credential);
-
-            return connection.GetClient<T>();
         }
     }
 }

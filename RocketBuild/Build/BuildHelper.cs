@@ -5,8 +5,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
-using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
+using RocketBuild.Helpers;
 
 namespace RocketBuild.Build
 {
@@ -14,8 +14,15 @@ namespace RocketBuild.Build
     {
         public async Task<List<DisplayBuild>> GetBuildsAsync()
         {
-            var client = GetClient<BuildHttpClient>();
-            var tfsClient = GetClient<TfvcHttpClient>();
+            var client = VssClientHelper.GetClient<BuildHttpClient>(
+                Settings.Current.AccountUrl,
+                Settings.Current.ApiKey,
+                Settings.Current.UseSsl);
+
+            var tfsClient = VssClientHelper.GetClient<TfvcHttpClient>(
+                Settings.Current.AccountUrl,
+                Settings.Current.ApiKey,
+                Settings.Current.UseSsl);
 
             List<BuildDefinitionReference> definitions = await client.GetDefinitionsAsync(Settings.Current.Project, name: null);
             var tfsBuilds = await client.GetBuildsAsync(Settings.Current.Project, definitions: definitions.Select(d => d.Id), maxBuildsPerDefinition: 1, queryOrder: BuildQueryOrder.FinishTimeDescending);
@@ -46,21 +53,15 @@ namespace RocketBuild.Build
 
         public async Task StartBuildAsync(DisplayBuild build)
         {
-            var client = GetClient<BuildHttpClient>();
+            var client = VssClientHelper.GetClient<BuildHttpClient>(
+                Settings.Current.AccountUrl,
+                Settings.Current.ApiKey,
+                Settings.Current.UseSsl);
 
             await client.QueueBuildAsync(new Microsoft.TeamFoundation.Build.WebApi.Build
             {
                 Definition = new DefinitionReference { Id = build.DefinitionId }
             }, Settings.Current.Project);
-        }
-
-        private static T GetClient<T>()
-            where T : VssHttpClientBase
-        {
-            var accountUri = new Uri(Settings.Current.AccountUrl);
-            var connection = new VssConnection(accountUri, new VssBasicCredential(null, Settings.Current.ApiKey));
-
-            return connection.GetClient<T>();
         }
     }
 }
