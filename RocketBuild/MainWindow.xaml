@@ -29,10 +29,10 @@
                         </Grid.RowDefinitions>
 
                         <DataGrid Grid.Row="0" ItemsSource="{Binding Builds}"
-					          AutoGenerateColumns="False" CanUserAddRows="False"
-					          CanUserDeleteRows="False" CanUserResizeRows="False"
-					          SelectionUnit="FullRow"
-                              md:DataGridAssist.CellPadding="13 8 8 8">
+					              AutoGenerateColumns="False" CanUserAddRows="False"
+					              CanUserDeleteRows="False" CanUserResizeRows="False"
+					              SelectionUnit="FullRow"
+                                  md:DataGridAssist.CellPadding="13 8 8 8">
                             <DataGrid.Columns>
                                 <DataGridCheckBoxColumn Header="" Binding="{Binding IsChecked}"
                                                         ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
@@ -40,7 +40,13 @@
                                 <DataGridTextColumn Header="Build name" IsReadOnly="True" Binding="{Binding Name}"/>
 
                                 <DataGridHyperlinkColumn Header="Last build" IsReadOnly="True"
-                                                         ContentBinding="{Binding LastBuild}" Binding="{Binding LastBuildLink}"/>
+                                                         ContentBinding="{Binding LastBuild}" Binding="{Binding LastBuildLink}">
+                                    <DataGridHyperlinkColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <EventSetter Event="Hyperlink.Click" Handler="OnHyperlinkClick" />
+                                        </Style>
+                                    </DataGridHyperlinkColumn.ElementStyle>
+                                </DataGridHyperlinkColumn>
 
                                 <DataGridTextColumn Header="Last check-in" IsReadOnly="True" Binding="{Binding LastCheckin}"/>
                                 <DataGridTextColumn Header="Status" IsReadOnly="True" Binding="{Binding LastBuildStatus}"/>
@@ -80,12 +86,12 @@
                             </Grid.ColumnDefinitions>
 
                             <ListBox Grid.Column="0" Margin="8" DisplayMemberPath="Name" SelectionMode="Single"
-						         ItemsSource="{Binding Environments}" SelectedItem="{Binding SelectedEnvironment}"/>
+						             ItemsSource="{Binding Environments}" SelectedItem="{Binding SelectedEnvironment}"/>
 
                             <DataGrid Grid.Column="1" ItemsSource="{Binding CurrentReleases}"
-						          AutoGenerateColumns="False" CanUserAddRows="False"
-						          CanUserDeleteRows="False" CanUserResizeRows="False"
-						          SelectionUnit="FullRow">
+						              AutoGenerateColumns="False" CanUserAddRows="False"
+						              CanUserDeleteRows="False" CanUserResizeRows="False"
+						              SelectionUnit="FullRow">
                                 <DataGrid.Columns>
                                     <DataGridCheckBoxColumn Header="" Binding="{Binding IsChecked}"
                                                             ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
@@ -94,10 +100,22 @@
                                     <DataGridTextColumn Header="Release name" IsReadOnly="True" Binding="{Binding Name}"/>
 
                                     <DataGridHyperlinkColumn Header="Last deploy" IsReadOnly="True" 
-                                                             ContentBinding="{Binding LastDeployedVersion}" Binding="{Binding LastDeployedVersionLink}"/>
+                                                             ContentBinding="{Binding LastDeployedVersion}" Binding="{Binding LastDeployedVersionLink}">
+                                        <DataGridHyperlinkColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <EventSetter Event="Hyperlink.Click" Handler="OnHyperlinkClick" />
+                                            </Style>
+                                        </DataGridHyperlinkColumn.ElementStyle>
+                                    </DataGridHyperlinkColumn>
 
                                     <DataGridHyperlinkColumn Header="Last release" IsReadOnly="True" 
-                                                             ContentBinding="{Binding AvailableVersion}" Binding="{Binding AvailableVersionLink}"/>
+                                                             ContentBinding="{Binding AvailableVersion}" Binding="{Binding AvailableVersionLink}">
+                                        <DataGridHyperlinkColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <EventSetter Event="Hyperlink.Click" Handler="OnHyperlinkClick" />
+                                            </Style>
+                                        </DataGridHyperlinkColumn.ElementStyle>
+                                    </DataGridHyperlinkColumn>
 
                                     <DataGridTextColumn Header="Status" IsReadOnly="True" Binding="{Binding Status}"/>
                                 </DataGrid.Columns>
