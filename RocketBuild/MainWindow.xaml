@@ -16,10 +16,7 @@
         Closing="OnClosing">
     <Grid>
         <Grid>
-            <dragablz:TabablzControl FixedHeaderCount="3" ShowDefaultCloseButton="True">
-                <dragablz:TabablzControl.InterTabController>
-                    <dragablz:InterTabController/>
-                </dragablz:TabablzControl.InterTabController>
+            <dragablz:TabablzControl FixedHeaderCount="3">
 
                 <TabItem Header="Build">
                     <Grid>
