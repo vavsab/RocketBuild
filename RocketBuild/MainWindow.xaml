@@ -6,6 +6,7 @@
         xmlns:deploy="clr-namespace:RocketBuild"
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
+        xmlns:settings="clr-namespace:RocketBuild.Settings"
         mc:Ignorable="d" 
         Template="{StaticResource MaterialWindowTemplate}"
         Style="{StaticResource MaterialWindowStyle}"
@@ -155,22 +156,22 @@
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0" Grid.Column="0" Margin="8" VerticalAlignment="Center" Text="API key" FontWeight="Bold"/>
-                        <TextBox Grid.Row="0" Grid.Column="1" Margin="8" VerticalAlignment="Center" Text="{Binding ApiKey, Source={x:Static deploy:Settings.Current}, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox Grid.Row="0" Grid.Column="1" Margin="8" VerticalAlignment="Center" Text="{Binding ApiKey, Source={x:Static settings:GlobalSettings.Current}, UpdateSourceTrigger=PropertyChanged}" />
 
                         <TextBlock Grid.Row="1" Grid.Column="0" Margin="8" VerticalAlignment="Center" Text="Project" FontWeight="Bold" />
-                        <TextBox Grid.Row="1" Grid.Column="1" Margin="8" VerticalAlignment="Center" Text="{Binding Project, Source={x:Static deploy:Settings.Current}, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox Grid.Row="1" Grid.Column="1" Margin="8" VerticalAlignment="Center" Text="{Binding Project, Source={x:Static settings:GlobalSettings.Current}, UpdateSourceTrigger=PropertyChanged}" />
 
                         <TextBlock Grid.Row="2" Grid.Column="0" Margin="8" VerticalAlignment="Center" Text="Account URL" FontWeight="Bold" />
-                        <TextBox Grid.Row="2" Grid.Column="1" Margin="8" VerticalAlignment="Center" Text="{Binding AccountUrl, Source={x:Static deploy:Settings.Current}, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox Grid.Row="2" Grid.Column="1" Margin="8" VerticalAlignment="Center" Text="{Binding AccountUrl, Source={x:Static settings:GlobalSettings.Current}, UpdateSourceTrigger=PropertyChanged}" />
 
                         <TextBlock Grid.Row="3" Grid.Column="0" Margin="8" VerticalAlignment="Center" Text="Use SSL" FontWeight="Bold" />
-                        <ToggleButton Grid.Row="3" Grid.Column="1" Margin="8" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="{Binding UseSsl, Source={x:Static deploy:Settings.Current}, UpdateSourceTrigger=PropertyChanged}" />
+                        <ToggleButton Grid.Row="3" Grid.Column="1" Margin="8" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="{Binding UseSsl, Source={x:Static settings:GlobalSettings.Current}, UpdateSourceTrigger=PropertyChanged}" />
 
                         <TextBlock Grid.Row="4" Grid.Column="0" Margin="8" VerticalAlignment="Center" Text="Build version regex" FontWeight="Bold" />
-                        <TextBox Grid.Row="4" Grid.Column="1" Margin="8" VerticalAlignment="Center" Text="{Binding BuildNameExtractVersionRegex, Source={x:Static deploy:Settings.Current}, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox Grid.Row="4" Grid.Column="1" Margin="8" VerticalAlignment="Center" Text="{Binding BuildNameExtractVersionRegex, Source={x:Static settings:GlobalSettings.Current}, UpdateSourceTrigger=PropertyChanged}" />
 
                         <TextBlock Grid.Row="5" Grid.Column="0" Margin="8" VerticalAlignment="Center" Text="Release version regex" FontWeight="Bold" />
-                        <TextBox Grid.Row="5" Grid.Column="1" Margin="8" VerticalAlignment="Center" Text="{Binding ReleaseNameExtractVersionRegex, Source={x:Static deploy:Settings.Current}, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox Grid.Row="5" Grid.Column="1" Margin="8" VerticalAlignment="Center" Text="{Binding ReleaseNameExtractVersionRegex, Source={x:Static settings:GlobalSettings.Current}, UpdateSourceTrigger=PropertyChanged}" />
                     </Grid>
                 </TabItem>
             </dragablz:TabablzControl>

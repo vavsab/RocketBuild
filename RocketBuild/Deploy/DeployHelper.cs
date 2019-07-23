@@ -17,16 +17,16 @@ namespace RocketBuild.Deploy
         public async Task<List<DisplayEnvironment>> GetEnvironmentsAsync()
         {
             var client = VssClientHelper.GetClient<ReleaseHttpClient>(
-                Settings.Current.AccountUrl,
-                Settings.Current.ApiKey,
-                Settings.Current.UseSsl);
+                Settings.GlobalSettings.Current.AccountUrl,
+                Settings.GlobalSettings.Current.ApiKey,
+                Settings.GlobalSettings.Current.UseSsl);
             var environments = new List<DisplayEnvironment>();
 
-            List<ReleaseDefinition> definitions = await client.GetReleaseDefinitionsAsync(Settings.Current.Project, expand: ReleaseDefinitionExpands.Environments);
+            List<ReleaseDefinition> definitions = await client.GetReleaseDefinitionsAsync(Settings.GlobalSettings.Current.Project, expand: ReleaseDefinitionExpands.Environments);
             string[] environmentNames = definitions.SelectMany(d => d.Environments).Select(e => e.Name).Distinct().ToArray();
 
             List<Release> releases = await client.GetReleasesAsync(
-                Settings.Current.Project, 
+                Settings.GlobalSettings.Current.Project, 
                 expand: ReleaseExpands.Environments, 
                 // Reduce number of releases to load faster
                 minCreatedTime: DateTime.Today.AddMonths(-6));
@@ -60,9 +60,9 @@ namespace RocketBuild.Deploy
                         DefinitionId = definition.Id,
                         EnvironmentId = releaseEnvironment?.Id,
                         Name = definition.Name,
-                        AvailableVersion = last != null ? Regex.Match(last.Name, Settings.Current.ReleaseNameExtractVersionRegex).Value : null,
+                        AvailableVersion = last != null ? Regex.Match(last.Name, Settings.GlobalSettings.Current.ReleaseNameExtractVersionRegex).Value : null,
                         AvailableVersionLink = (last?.Links.Links["web"] as ReferenceLink)?.Href,
-                        LastDeployedVersion = lastSuccess != null ? Regex.Match(lastSuccess.Name, Settings.Current.ReleaseNameExtractVersionRegex).Value : String.Empty,
+                        LastDeployedVersion = lastSuccess != null ? Regex.Match(lastSuccess.Name, Settings.GlobalSettings.Current.ReleaseNameExtractVersionRegex).Value : String.Empty,
                         LastDeployedVersionLink = (lastSuccess?.Links.Links["web"] as ReferenceLink)?.Href,
                         Status = (DisplayReleaseStatus?)releaseEnvironment?.Status
                     });
@@ -83,15 +83,15 @@ namespace RocketBuild.Deploy
             }
 
             var client = VssClientHelper.GetClient<ReleaseHttpClient>(
-                Settings.Current.AccountUrl,
-                Settings.Current.ApiKey,
-                Settings.Current.UseSsl);
+                Settings.GlobalSettings.Current.AccountUrl,
+                Settings.GlobalSettings.Current.ApiKey,
+                Settings.GlobalSettings.Current.UseSsl);
 
             await client.UpdateReleaseEnvironmentAsync(new ReleaseEnvironmentUpdateMetadata
             {
                 Status = EnvironmentStatus.InProgress,
                 Comment = "Started from RocketBuild application"
-            }, Settings.Current.Project, release.Id, release.EnvironmentId.Value);
+            }, Settings.GlobalSettings.Current.Project, release.Id, release.EnvironmentId.Value);
         }
     }
 }

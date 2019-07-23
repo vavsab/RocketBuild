@@ -63,20 +63,26 @@ namespace RocketBuild
 
         public void OnClosing()
         {
-            Settings.Current.LastSelectedEnvironment = SelectedEnvironment?.Name;
+            Settings.GlobalSettings.Current.LastSelectedEnvironment = SelectedEnvironment?.Name;
 
-            Settings.Current.LastSelectedBuildIds.Clear();
-            Settings.Current.LastSelectedBuildIds.AddRange(Builds
-                    ?.Where(b => b.IsChecked)
+            if (Builds != null)
+            {
+                Settings.GlobalSettings.Current.LastSelectedBuildIds.Clear();
+                Settings.GlobalSettings.Current.LastSelectedBuildIds.AddRange(Builds
+                    .Where(b => b.IsChecked)
                     .Select(b => b.DefinitionId));
+            }
 
-            Settings.Current.LastSelectedReleaseIds.Clear();
-            Settings.Current.LastSelectedReleaseIds.AddRange(Environments
+            if (Environments != null)
+            {
+                Settings.GlobalSettings.Current.LastSelectedReleaseIds.Clear();
+                Settings.GlobalSettings.Current.LastSelectedReleaseIds.AddRange(Environments
                     .ToDictionary(e => e.Name, e => e.Releases
                         .Where(r => r.IsChecked)
                         .Select(r => r.Id)));
+            }
 
-            Settings.Save();
+            Settings.GlobalSettings.Save();
         }
 
         [Command]
@@ -251,7 +257,7 @@ namespace RocketBuild
             {
                 foreach (DisplayBuild build in Builds)
                 {
-                    build.IsChecked = Settings.Current.LastSelectedBuildIds.Contains(build.DefinitionId);
+                    build.IsChecked = Settings.GlobalSettings.Current.LastSelectedBuildIds.Contains(build.DefinitionId);
                 }
             }
 
@@ -259,7 +265,7 @@ namespace RocketBuild
             {
                 foreach (DisplayEnvironment environment in Environments)
                 {
-                    int[] lastSelectedReleases = Settings.Current.LastSelectedReleaseIds
+                    int[] lastSelectedReleases = Settings.GlobalSettings.Current.LastSelectedReleaseIds
                         .GetValueOrDefault(environment.Name)
                         .ToArray();
 
@@ -271,7 +277,7 @@ namespace RocketBuild
             }
 
             SelectedEnvironment = Environments
-                ?.FirstOrDefault(e => String.Equals(e.Name, Settings.Current.LastSelectedEnvironment,
+                ?.FirstOrDefault(e => String.Equals(e.Name, Settings.GlobalSettings.Current.LastSelectedEnvironment,
                     StringComparison.OrdinalIgnoreCase));
         }
     }

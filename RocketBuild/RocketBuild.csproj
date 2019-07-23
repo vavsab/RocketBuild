@@ -165,6 +165,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Settings\GlobalSettings.cs" />
+    <Compile Include="Settings\WindowPositionSettings.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -183,7 +185,6 @@
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Helpers\VssClientHelper.cs" />
     <Compile Include="MainViewModel.cs" />
-    <Compile Include="Settings.cs" />
     <Compile Include="Deploy\DeployHelper.cs" />
     <Compile Include="Deploy\DisplayRelease.cs" />
     <Compile Include="Deploy\Environment.cs" />

@@ -15,21 +15,21 @@ namespace RocketBuild.Build
         public async Task<List<DisplayBuild>> GetBuildsAsync()
         {
             var client = VssClientHelper.GetClient<BuildHttpClient>(
-                Settings.Current.AccountUrl,
-                Settings.Current.ApiKey,
-                Settings.Current.UseSsl);
+                Settings.GlobalSettings.Current.AccountUrl,
+                Settings.GlobalSettings.Current.ApiKey,
+                Settings.GlobalSettings.Current.UseSsl);
 
             var tfsClient = VssClientHelper.GetClient<TfvcHttpClient>(
-                Settings.Current.AccountUrl,
-                Settings.Current.ApiKey,
-                Settings.Current.UseSsl);
+                Settings.GlobalSettings.Current.AccountUrl,
+                Settings.GlobalSettings.Current.ApiKey,
+                Settings.GlobalSettings.Current.UseSsl);
 
-            List<BuildDefinitionReference> definitions = await client.GetDefinitionsAsync(Settings.Current.Project, name: null);
-            var tfsBuilds = await client.GetBuildsAsync(Settings.Current.Project, definitions: definitions.Select(d => d.Id), maxBuildsPerDefinition: 1, queryOrder: BuildQueryOrder.FinishTimeDescending);
+            List<BuildDefinitionReference> definitions = await client.GetDefinitionsAsync(Settings.GlobalSettings.Current.Project, name: null);
+            var tfsBuilds = await client.GetBuildsAsync(Settings.GlobalSettings.Current.Project, definitions: definitions.Select(d => d.Id), maxBuildsPerDefinition: 1, queryOrder: BuildQueryOrder.FinishTimeDescending);
 
             var builds = new List<DisplayBuild>();
 
-            TfvcChangesetRef changeset = (await tfsClient.GetChangesetsAsync(Settings.Current.Project, top: 1)).FirstOrDefault();
+            TfvcChangesetRef changeset = (await tfsClient.GetChangesetsAsync(Settings.GlobalSettings.Current.Project, top: 1)).FirstOrDefault();
 
             foreach (BuildDefinitionReference definition in definitions)
             {
@@ -40,7 +40,7 @@ namespace RocketBuild.Build
                 {
                     DefinitionId = definition.Id,
                     Name = definition.Name,
-                    LastBuild = lastTfsBuild != null ? Regex.Match(lastTfsBuild.BuildNumber, Settings.Current.BuildNameExtractVersionRegex).Value : String.Empty,
+                    LastBuild = lastTfsBuild != null ? Regex.Match(lastTfsBuild.BuildNumber, Settings.GlobalSettings.Current.BuildNameExtractVersionRegex).Value : String.Empty,
                     LastBuildStatus = (DisplayBuildStatus?)lastTfsBuild?.Status,
                     LastBuildResult = (BuildResult?)lastTfsBuild?.Result,
                     LastBuildLink = lastTfsBuildLink,
@@ -54,14 +54,14 @@ namespace RocketBuild.Build
         public async Task StartBuildAsync(DisplayBuild build)
         {
             var client = VssClientHelper.GetClient<BuildHttpClient>(
-                Settings.Current.AccountUrl,
-                Settings.Current.ApiKey,
-                Settings.Current.UseSsl);
+                Settings.GlobalSettings.Current.AccountUrl,
+                Settings.GlobalSettings.Current.ApiKey,
+                Settings.GlobalSettings.Current.UseSsl);
 
             await client.QueueBuildAsync(new Microsoft.TeamFoundation.Build.WebApi.Build
             {
                 Definition = new DefinitionReference { Id = build.DefinitionId }
-            }, Settings.Current.Project);
+            }, Settings.GlobalSettings.Current.Project);
         }
     }
 }
