@@ -15,6 +15,8 @@ namespace RocketBuild
 {
     public class MainViewModel : ViewModelBase
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly DeployHelper deployHelper = new DeployHelper();
         private readonly BuildHelper buildHelper = new BuildHelper();
 
@@ -111,7 +113,7 @@ namespace RocketBuild
             }
             catch (Exception e)
             {
-                MessageBox.Show($"Exception > {nameof(RefreshBuilds)}: {e}");
+                Logger.Error(e, e.Message);
             }
             finally
             {
@@ -154,7 +156,7 @@ namespace RocketBuild
             }
             catch (Exception e)
             {
-                MessageBox.Show($"Exception > {nameof(RefreshEnvironments)}: {e}");
+                Logger.Error(e, e.Message);
             }
             finally
             {
@@ -189,7 +191,7 @@ namespace RocketBuild
             }
             catch (Exception e)
             {
-                MessageBox.Show($"Exception > {nameof(QueueBuilds)}: {e}");
+                Logger.Error(e, e.Message);
             }
             finally
             {
@@ -224,7 +226,7 @@ namespace RocketBuild
             }
             catch (Exception e)
             {
-                MessageBox.Show($"Exception > {nameof(QueueDeploy)}: {e}");
+                Logger.Error(e, e.Message);
             }
             finally
             {

@@ -14,5 +14,11 @@ namespace RocketBuild
             Application.SetCompatibleTextRenderingDefault(false);
             base.OnStartup(e);
         }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            NLog.LogManager.Shutdown();
+            base.OnExit(e);
+        }
     }
 }
